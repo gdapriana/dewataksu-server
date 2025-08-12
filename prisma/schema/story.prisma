@@ -1,0 +1,21 @@
+model Story {
+    id          String  @id @default(cuid())
+    name        String
+    slug        String  @unique
+    content     String
+    isPublished Boolean @default(true)
+    coverId     String?
+    userId      String
+
+    cover  Image? @relation(fields: [coverId], references: [id], onDelete: Cascade)
+    author User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    likes     Like[]
+    bookmarks Bookmark[]
+    comments  Comment[]
+
+    @@map("stories")
+}

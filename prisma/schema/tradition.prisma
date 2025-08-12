@@ -1,0 +1,19 @@
+model Tradition {
+    id          String  @id @default(cuid())
+    name        String
+    slug        String  @unique
+    content     String
+    coverId     String?
+    cover       Image?  @relation(fields: [coverId], references: [id], onDelete: Cascade)
+    isPublished Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    likes     Like[]
+    galleries Gallery[]
+    bookmarks Bookmark[]
+    comments  Comment[]
+
+    @@map("traditions")
+}

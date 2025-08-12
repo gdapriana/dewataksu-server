@@ -1,0 +1,21 @@
+model Comment {
+    id            String  @id @default(cuid())
+    body          String
+    userId        String
+    destinationId String?
+    traditionId   String?
+    storyId       String?
+    parentId      String?
+
+    author      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    destination Destination? @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+    tradition   Tradition?   @relation(fields: [traditionId], references: [id], onDelete: Cascade)
+    story       Story?       @relation(fields: [storyId], references: [id], onDelete: Cascade)
+    parent      Comment?     @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+    replies     Comment[]    @relation("CommentReplies")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("comments")
+}

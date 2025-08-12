@@ -1,0 +1,34 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+generator jsonSchema {
+  provider    = "prisma-json-schema-generator"
+  output      = "../json-schema/"
+  refStrategy = "components"
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ActivityType {
+  CREATE
+  UPDATE
+  DELETE
+}
+
+enum Schema {
+  CATEGORY
+  DESTINATION
+  DISTRICT
+  STORY
+  TRADITION
+  USER
+}

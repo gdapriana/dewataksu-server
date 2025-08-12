@@ -1,0 +1,16 @@
+model Gallery {
+    id String @id @default(cuid())
+
+    imageId       String?
+    traditionId   String?
+    destinationId String?
+
+    tradition   Tradition?   @relation(fields: [traditionId], references: [id], onDelete: Cascade)
+    destination Destination? @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+    image       Image?       @relation(fields: [imageId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("galleries")
+}

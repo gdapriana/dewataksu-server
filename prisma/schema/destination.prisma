@@ -1,0 +1,30 @@
+model Destination {
+    id          String  @id @default(cuid())
+    name        String
+    slug        String  @unique
+    content     String?
+    address     String?
+    mapUrl      String?
+    latitude    Float?
+    longitude   Float?
+    price       Int?    @default(0)
+    coverId     String?
+    districtId  String
+    categoryId  String
+    isPublished Boolean @default(true)
+
+    cover    Image?   @relation(fields: [coverId], references: [id], onDelete: Cascade)
+    category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    district District @relation(fields: [districtId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    tags      Tag[]
+    galleries Gallery[]
+    likes     Like[]
+    bookmarks Bookmark[]
+    comments  Comment[]
+
+    @@map("destinations")
+}

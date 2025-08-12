@@ -1,0 +1,19 @@
+model Bookmark {
+    id            String  @id @default(cuid())
+    userId        String
+    destinationId String?
+    traditionId   String?
+    storyId       String?
+
+    destination Destination? @relation(fields: [destinationId], references: [id], onDelete: Cascade)
+    user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+    tradition   Tradition?   @relation(fields: [traditionId], references: [id], onDelete: Cascade)
+    story       Story?       @relation(fields: [storyId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@unique([userId, destinationId])
+    @@unique([userId, traditionId])
+    @@unique([userId, storyId])
+    @@map("bookmarks")
+}

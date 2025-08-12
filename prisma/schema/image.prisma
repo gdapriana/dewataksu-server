@@ -1,0 +1,17 @@
+model Image {
+    id       String  @id @default(cuid())
+    url      String?
+    publicId String?
+
+    story       Story[]
+    tradition   Tradition[]
+    destination Destination[]
+    user        User[]
+    gallery     Gallery[]
+    district    District[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@map("images")
+}

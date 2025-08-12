@@ -1,0 +1,12 @@
+model ActivityLog {
+    id     String       @id @default(cuid())
+    userId String
+    schema Schema
+    action ActivityType
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+
+    @@map("activitiesLog")
+}
