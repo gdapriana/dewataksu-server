@@ -39,23 +39,14 @@ Creates a new user account.
 | fullName | string | No       | `"John Doe"`                                       |
 | password | string | Yes      | `"securePassword123"`                              |
 | bio      | string | No       | `"Software developer passionate about technology"` |
-| role     | string | No       | `"USER"` (default: USER)                           |
 
 **Response:**
 
 ```json
 {
   "success": true,
-  "data": {
-    "id": "clh7x2y3z0000qwerty123",
-    "email": "john.doe@example.com",
-    "name": "johndoe",
-    "fullName": "John Doe",
-    "bio": "Software developer passionate about technology",
-    "role": "USER",
-    "profileImage": null,
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
+  "result": {
+    "id": "clh7x2y3z0000qwerty123"
   },
   "message": "User created successfully"
 }
@@ -75,7 +66,7 @@ Retrieves a paginated list of users.
 
 **Endpoint:** `GET /api/users`
 
-**Authentication:** Required (Admin role recommended)
+**Authentication:** Required (Admin role)
 
 **Query Parameters:**
 
@@ -159,18 +150,26 @@ Retrieves a specific user by their ID.
     "role": "USER",
     "profileImage": {
       "id": "img_123",
-      "url": "https://example.com/images/profile.jpg",
-      "alt": "Profile picture"
+      "url": "https://example.com/images/profile.jpg"
     },
     "stories": [
       {
         "id": "story_123",
-        "title": "My First Story",
-        "createdAt": "2024-01-16T09:00:00.000Z"
+        "name": "My First Story",
+        "slug": "my-first-story"
+        "createdAt": "2024-01-16T09:00:00.000Z",
+        "updatedAt": "2024-01-16T09:00:00.000Z"
       }
     ],
     "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
+    "updatedAt": "2024-01-15T10:30:00.000Z",
+    "_count": {
+      "likes": 0,
+      "bookmarks": 0,
+      "stories": 0,
+      "comment": 0,
+      "activityLogs": 0
+    }
   }
 }
 ```
@@ -208,11 +207,12 @@ Retrieves the authenticated user's profile.
       "url": "https://example.com/images/profile.jpg",
       "alt": "Profile picture"
     },
-    "stats": {
-      "storiesCount": 5,
-      "likesCount": 23,
-      "bookmarksCount": 12,
-      "commentsCount": 34
+    "_count": {
+      "likes": 0,
+      "bookmarks": 0,
+      "stories": 0,
+      "comment": 0,
+      "activityLogs": 0
     },
     "createdAt": "2024-01-15T10:30:00.000Z",
     "updatedAt": "2024-01-15T10:30:00.000Z"
@@ -241,11 +241,11 @@ Updates user information. Users can only update their own profile unless they ha
 
 **Request Body:**
 
-| Field          | Type   | Required | Example                                                |
-| -------------- | ------ | -------- | ------------------------------------------------------ |
-| fullName       | string | No       | `"John Michael Doe"`                                   |
-| bio            | string | No       | `"Senior Software Developer with 5+ years experience"` |
-| profileImageId | string | No       | `"img_456"`                                            |
+| Field        | Type   | Required | Example                                                |
+| ------------ | ------ | -------- | ------------------------------------------------------ |
+| fullName     | string | No       | `"John Michael Doe"`                                   |
+| bio          | string | No       | `"Senior Software Developer with 5+ years experience"` |
+| profileImage | object | No       | {"url": "...", "publicId": "..."}                      |
 
 **Response:**
 
@@ -253,19 +253,7 @@ Updates user information. Users can only update their own profile unless they ha
 {
   "success": true,
   "data": {
-    "id": "clh7x2y3z0000qwerty123",
-    "email": "john.doe@example.com",
-    "name": "johndoe",
-    "fullName": "John Michael Doe",
-    "bio": "Senior Software Developer with 5+ years experience",
-    "role": "USER",
-    "profileImage": {
-      "id": "img_456",
-      "url": "https://example.com/images/new-profile.jpg",
-      "alt": "Updated profile picture"
-    },
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-20T14:45:00.000Z"
+    "id": "clh7x2y3z0000qwerty123"
   },
   "message": "User updated successfully"
 }
