@@ -82,8 +82,8 @@ Retrieves a paginated list of destinations.
 - `page` (optional): Page number (default: 1)
 - `limit` (optional): Items per page (default: 10, max: 100)
 - `search` (optional): Search by name or content
-- `categoryId` (optional): Filter by category ID
-- `districtId` (optional): Filter by district ID
+- `categorySlug` (optional): Filter by category Slug
+- `districtSlug` (optional): Filter by district Slug
 - `tags` (optional): Filter by tags (comma-separated)
 - `isPublished` (optional): Filter by publication status (default: true)
 - `minPrice` (optional): Minimum price filter
@@ -166,7 +166,7 @@ GET /api/destinations?page=1&limit=10&categoryId=cat_123&tags=temple,heritage&so
 
 ---
 
-### 3. Get Destination by ID
+### 3. Get Destination by ID [Not implement]
 
 Retrieves a specific destination by its ID.
 
