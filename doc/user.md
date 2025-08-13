@@ -95,7 +95,35 @@ User login
 
 ---
 
-### 2. Get All Users
+### 3. Get Token
+
+Get user access token while old token is expired
+
+**Endpoint:** `GET /api/token`
+
+**Authentication:** Required
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "result": {
+    "accessToken": "clh7x2y3z0000qwerty123"
+  },
+  "message": "New token generated succesfully"
+}
+```
+
+**Status Codes:**
+
+- `200` - User login success
+- `400` - Validation error or missing required fields
+- `409` - Email or username already exists
+
+---
+
+### 4. Get All Users
 
 Retrieves a paginated list of users.
 
@@ -159,7 +187,7 @@ GET /api/users?page=1&limit=10&search=john&role=USER
 
 ---
 
-### 3. Get User by ID
+### 5. Get User by ID
 
 Retrieves a specific user by their ID.
 
@@ -217,11 +245,11 @@ Retrieves a specific user by their ID.
 
 ---
 
-### 4. Get Current User Profile
+### 6. Get Current User Profile
 
 Retrieves the authenticated user's profile.
 
-**Endpoint:** `GET /api/users/me`
+**Endpoint:** `GET /api/me`
 
 **Authentication:** Required
 
@@ -262,7 +290,7 @@ Retrieves the authenticated user's profile.
 
 ---
 
-### 5. Update User
+### 7. Update User
 
 Updates user information. Users can only update their own profile unless they have admin privileges.
 
@@ -305,7 +333,7 @@ Updates user information. Users can only update their own profile unless they ha
 
 ---
 
-### 6. Update User Password
+### 8. Update User Password
 
 Updates the user's password.
 
@@ -344,7 +372,7 @@ Updates the user's password.
 
 ---
 
-### 7. Update User Role
+### 9. Update User Role
 
 Updates a user's role (Admin only).
 
@@ -388,7 +416,7 @@ Updates a user's role (Admin only).
 
 ---
 
-### 8. Delete User
+### 10. Delete User
 
 Deletes a user account. Users can only delete their own account unless they have admin privileges.
 
@@ -426,7 +454,7 @@ Deletes a user account. Users can only delete their own account unless they have
 
 ---
 
-### 9. Get User Activity
+### 11. Get User Activity
 
 Retrieves user's activity logs.
 
@@ -505,18 +533,6 @@ Retrieves user's activity logs.
   "activityLogs": "ActivityLog[]", // User's activity logs (when included)
   "createdAt": "string", // ISO 8601 timestamp
   "updatedAt": "string" // ISO 8601 timestamp
-}
-```
-
-### Image Object
-
-```json
-{
-  "id": "string",
-  "url": "string",
-  "alt": "string|null",
-  "createdAt": "string",
-  "updatedAt": "string"
 }
 ```
 
