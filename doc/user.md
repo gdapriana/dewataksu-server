@@ -60,6 +60,41 @@ Creates a new user account.
 
 ---
 
+### 2. Login
+
+User login
+
+**Endpoint:** `POST /api/users/login`
+
+**Authentication:** Not required
+
+**Request Body:**
+
+| Field    | Type   | Required | Example               |
+| -------- | ------ | -------- | --------------------- |
+| name     | string | Yes      | `"johndoe"`           |
+| password | string | Yes      | `"securePassword123"` |
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "result": {
+    "accessToken": "clh7x2y3z0000qwerty123"
+  },
+  "message": "User created successfully"
+}
+```
+
+**Status Codes:**
+
+- `200` - User login success
+- `400` - Validation error or missing required fields
+- `409` - Email or username already exists
+
+---
+
 ### 2. Get All Users
 
 Retrieves a paginated list of users.
