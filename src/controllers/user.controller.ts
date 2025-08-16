@@ -8,7 +8,7 @@ export class UserAuthController {
       const body = req.body;
       const result = await UserAuthServices.REGISTER(body);
       res.status(200).json({
-        status: "success",
+        success: true,
         result,
         message: "User created successfully",
       });
@@ -21,16 +21,45 @@ export class UserAuthController {
     try {
       const body = req.body;
       const result: { accessToken: string; refreshToken: string } = await UserAuthServices.LOGIN(body);
-
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
       });
 
       res.status(200).json({
-        status: "success",
+        success: true,
         result: { accessToken: result.accessToken },
         message: "User login successfully",
+      });
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  }
+
+  static async REFRESH_TOKEN(req: Request, res: Response, next: NextFunction) {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+      const newAccessToken = await UserAuthServices.REFRESH_TOKEN(refreshToken);
+      res.status(200).json({
+        success: true,
+        result: {
+          accessToken: newAccessToken,
+        },
+        message: "New token generated succesfully",
+      });
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  }
+  static async ME(req: UserRequest, res: Response, next: NextFunction) {
+    try {
+      const id = req.user?.id;
+      const result = await UserAuthServices.ME(id);
+      res.status(200).json({
+        success: true,
+        result,
       });
     } catch (e) {
       console.error(e);
@@ -72,7 +101,6 @@ export class UserController {
   static async PATCH(req: UserRequest, res: Response, next: NextFunction) {
     try {
       let id: string;
-
       if (req.user?.role === "ADMIN") {
         id = req.params.id;
       } else {

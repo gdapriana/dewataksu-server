@@ -6,7 +6,7 @@ import { DB_SCHEMA, ErrorResponseMessage, ResponseError } from "src/utils/error-
 import z from "zod";
 import { UserAuthResponse, UserResponse } from "src/responses/user.response";
 import { UserPayload } from "src/utils/types";
-import { generateAccessToken, generateRefreshToken } from "src/utils/token";
+import { generateAccessToken, generateNewAccessToken, generateRefreshToken } from "src/utils/token";
 import { Prisma } from "@prisma/client";
 
 export class UserAuthServices {
@@ -52,6 +52,21 @@ export class UserAuthServices {
       select: UserAuthResponse.LOGIN,
     });
     return { refreshToken: response.refreshToken!, accessToken };
+  }
+
+  static async REFRESH_TOKEN(refreshToken: string | undefined) {
+    if (!refreshToken) throw new ResponseError(ErrorResponseMessage.UNAUTHORIZED());
+    const itemCheck = await this.table.findFirst({ where: { refreshToken } });
+    if (!itemCheck) throw new ResponseError(ErrorResponseMessage.FORBIDDEN());
+    const newAccessToken = await generateNewAccessToken(refreshToken);
+    return newAccessToken;
+  }
+
+  static async ME(id: string | undefined) {
+    if (!id) throw new ResponseError(ErrorResponseMessage.FORBIDDEN());
+    const checkItem = await this.table.findUnique({ where: { id }, select: UserResponse.GET });
+    if (!checkItem) throw new ResponseError(ErrorResponseMessage.FORBIDDEN());
+    return checkItem;
   }
 }
 
@@ -132,6 +147,8 @@ export class UserServices {
     const validatedId = Validation.validate(this.validation.DELETE, id);
     const checkItem = await this.table.findUnique({ where: { id: validatedId } });
     if (!checkItem) throw new ResponseError(ErrorResponseMessage.NOT_FOUND(this.schema));
+    if (user.id === checkItem.id) throw new ResponseError(ErrorResponseMessage.BAD_REQUEST("cannot delete yourself"));
+    if (checkItem.role === "ADMIN") throw new ResponseError(ErrorResponseMessage.BAD_REQUEST("cannot delete admin"));
     const deletedItem = await this.table.delete({ where: { id: validatedId }, select: { id: true } });
     await db.activityLog.create({
       data: {

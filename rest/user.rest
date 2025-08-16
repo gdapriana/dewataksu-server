@@ -4,7 +4,7 @@ POST http://localhost:5050/register
 Content-Type: application/json
 
 {
-    "name": "user",
+    "name": "user_new",
     "password": "111"
 }
 
@@ -14,12 +14,12 @@ POST http://localhost:5050/login
 Content-Type: application/json
 
 {
-    "name": "admin",
+    "name": "user_new",
     "password": "111"
 }
 
 ### GET
-GET http://localhost:5050/users/user_1
+GET http://localhost:5050/users/user_new
 
 ### GETs
 GET http://localhost:5050/users?limit=2
@@ -28,7 +28,7 @@ GET http://localhost:5050/users?limit=2
 
 PATCH http://localhost:5050/users/cmebb3ba80002ugnye86vrgll
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUyNzMxODMsImV4cCI6MTc1NTI3NDA4M30.ZEqWWReWbhyUogOJGjy7gYAbkJB-WGHJg4LQe6Rd_rA
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUzNDg1NjMsImV4cCI6MTc1NTM0OTQ2M30.c1gWhn-znHTU5eaxoqlZQ7FJeIKjeSm83IL_cNKv06w
 
 {
     "fullName": "updated"
@@ -36,5 +36,14 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhN
 
 
 ### DELETE
-DELETE http://localhost:5050/users/sdadss
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUyNzQ0MTIsImV4cCI6MTc1NTI3NTMxMn0.0IbhHyK0aIDKfwL32DqWvgv1hEEqxKcYHfUIT2XsIyQ
+DELETE http://localhost:5050/users/cmebb3ba70000ugnyo97p1tgu
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUzNDU3NDEsImV4cCI6MTc1NTM0NjY0MX0.KUCVakSzkfLFJdSGDqibkpwlqvadc-Cu51J_1FPejn8
+
+
+### TOKEN
+GET http://localhost:5050/token
+
+
+### ME
+GET http://localhost:5050/me
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUzNDg1NjMsImV4cCI6MTc1NTM0OTQ2M30.c1gWhn-znHTU5eaxoqlZQ7FJeIKjeSm83IL_cNKv06w

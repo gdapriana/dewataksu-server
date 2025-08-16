@@ -440,6 +440,9 @@ Deletes a user account. Users can only delete their own account unless they have
 ```json
 {
   "success": true,
+  "result": {
+    "id": "...."
+  },
   "message": "User account deleted successfully"
 }
 ```

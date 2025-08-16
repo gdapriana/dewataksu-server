@@ -12,9 +12,8 @@ web.use(express.json());
 web.use(cookieParser());
 web.use(cors({ credentials: true, origin: true }));
 web.use(publicRoute);
-web.use(adminRoute);
-
 web.use(userRoute);
+web.use(adminRoute);
 web.use((req, res, next) => {
   const error = new ResponseError({
     status: 500,

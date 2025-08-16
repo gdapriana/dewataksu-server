@@ -11,6 +11,8 @@ export class UserAuthResponse {
 
 export class UserResponse {
   static readonly GET: Prisma.UserSelect = {
+    id: true,
+    fullName: true,
     name: true,
     _count: true,
     bio: true,
