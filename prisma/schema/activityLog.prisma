@@ -1,8 +1,9 @@
 model ActivityLog {
-    id     String       @id @default(cuid())
-    userId String
-    schema Schema
-    action ActivityType
+    id       String       @id @default(cuid())
+    userId   String
+    schemaId String
+    schema   Schema
+    action   ActivityType
 
     user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

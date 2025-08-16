@@ -1,0 +1,40 @@
+### REGISTER
+
+POST http://localhost:5050/register
+Content-Type: application/json
+
+{
+    "name": "user",
+    "password": "111"
+}
+
+### LOGIN
+
+POST http://localhost:5050/login
+Content-Type: application/json
+
+{
+    "name": "admin",
+    "password": "111"
+}
+
+### GET
+GET http://localhost:5050/users/user_1
+
+### GETs
+GET http://localhost:5050/users?limit=2
+
+### PATCH
+
+PATCH http://localhost:5050/users/cmebb3ba80002ugnye86vrgll
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUyNzMxODMsImV4cCI6MTc1NTI3NDA4M30.ZEqWWReWbhyUogOJGjy7gYAbkJB-WGHJg4LQe6Rd_rA
+
+{
+    "fullName": "updated"
+}
+
+
+### DELETE
+DELETE http://localhost:5050/users/sdadss
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUyNzQ0MTIsImV4cCI6MTc1NTI3NTMxMn0.0IbhHyK0aIDKfwL32DqWvgv1hEEqxKcYHfUIT2XsIyQ

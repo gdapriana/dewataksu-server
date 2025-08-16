@@ -7,6 +7,9 @@
         "id": {
           "type": "string"
         },
+        "schemaId": {
+          "type": "string"
+        },
         "schema": {
           "type": "string",
           "enum": [
