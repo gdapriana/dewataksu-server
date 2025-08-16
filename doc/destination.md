@@ -7,7 +7,7 @@ The Destination API provides endpoints for managing tourist destinations, includ
 ## Base URL
 
 ```
-/api/destinations
+/destinations
 ```
 
 ## Authentication
@@ -26,7 +26,7 @@ Authorization: Bearer <your_jwt_token>
 
 Creates a new destination.
 
-**Endpoint:** `POST /api/destinations`
+**Endpoint:** `POST /destinations`
 
 **Authentication:** Required (Admin role)
 
@@ -38,8 +38,6 @@ Creates a new destination.
 | content     | string   | No       | `"Ancient Buddhist temple in Java"`    |
 | address     | string   | No       | `"Jl. Badrawati, Borobudur, Magelang"` |
 | mapUrl      | string   | No       | `"https://maps.google.com/..."`        |
-| latitude    | number   | No       | `-7.6079`                              |
-| longitude   | number   | No       | `110.2038`                             |
 | price       | number   | No       | `50000`                                |
 | coverId     | string   | No       | `"img_123"`                            |
 | districtId  | string   | Yes      | `"district_123"`                       |
@@ -73,7 +71,7 @@ Creates a new destination.
 
 Retrieves a paginated list of destinations.
 
-**Endpoint:** `GET /api/destinations`
+**Endpoint:** `GET /destinations`
 
 **Authentication:** Not required
 
@@ -110,9 +108,6 @@ GET /api/destinations?page=1&limit=10&categoryId=cat_123&tags=temple,heritage&so
         "slug": "borobudur-temple",
         "content": "Ancient Buddhist temple in Java",
         "address": "Jl. Badrawati, Borobudur, Magelang",
-        "mapUrl": "https://maps.google.com/...",
-        "latitude": -7.6079,
-        "longitude": 110.2038,
         "price": 50000,
         "isPublished": true,
         "cover": {

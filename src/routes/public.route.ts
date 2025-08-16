@@ -1,4 +1,5 @@
 import express from "express";
+import { DestinationControllers } from "src/controllers/destination.controller";
 import { UserAuthController, UserController } from "src/controllers/user.controller";
 
 const publicRoute = express.Router();
@@ -9,5 +10,7 @@ publicRoute.get("/token", UserAuthController.REFRESH_TOKEN);
 
 publicRoute.get("/users", UserController.GETs);
 publicRoute.get("/users/:name", UserController.GET);
+
+publicRoute.get("/destinations", DestinationControllers.GETs);
 
 export default publicRoute;

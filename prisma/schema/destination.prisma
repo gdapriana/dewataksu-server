@@ -5,8 +5,6 @@ model Destination {
     content     String?
     address     String?
     mapUrl      String?
-    latitude    Float?
-    longitude   Float?
     price       Int?    @default(0)
     coverId     String?
     districtId  String
