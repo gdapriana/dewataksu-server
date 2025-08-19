@@ -14,7 +14,7 @@ POST http://localhost:5050/login
 Content-Type: application/json
 
 {
-    "name": "admin",
+    "name": "user_2",
     "password": "111"
 }
 
@@ -46,4 +46,4 @@ GET http://localhost:5050/token
 
 ### ME
 GET http://localhost:5050/me
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTUzNDg1NjMsImV4cCI6MTc1NTM0OTQ2M30.c1gWhn-znHTU5eaxoqlZQ7FJeIKjeSm83IL_cNKv06w
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhODAwMDJ1Z255ZTg2dnJnbGwiLCJuYW1lIjoidXNlcl8yIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTU2MDcwMDgsImV4cCI6MTc1NTYwNzkwOH0.5fItLz8p-hA4r6jbll5Z1Yv_Fk-wQeto_A_MIWvEKKs
