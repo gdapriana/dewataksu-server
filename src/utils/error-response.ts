@@ -3,20 +3,7 @@ interface ErrorResponse {
   message: string;
 }
 
-export type DB_SCHEMA =
-  | "user"
-  | "activity"
-  | "gallery"
-  | "image"
-  | "category"
-  | "like"
-  | "tag"
-  | "user"
-  | "destination"
-  | "tradition"
-  | "story"
-  | "comment"
-  | "bookmark";
+export type DB_SCHEMA = "user" | "activity" | "gallery" | "district" | "image" | "category" | "like" | "tag" | "user" | "destination" | "tradition" | "story" | "comment" | "bookmark";
 
 export class ErrorResponseMessage {
   static INVALID_USERNAME_PASSWORD(): ErrorResponse {
@@ -32,9 +19,7 @@ export class ErrorResponseMessage {
     };
   }
 
-  static UNAUTHORIZED(
-    message: string = "authentication failed, please login."
-  ): ErrorResponse {
+  static UNAUTHORIZED(message: string = "authentication failed, please login."): ErrorResponse {
     return {
       status: 401,
       message,

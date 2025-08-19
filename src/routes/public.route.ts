@@ -11,6 +11,7 @@ publicRoute.get("/token", UserAuthController.REFRESH_TOKEN);
 publicRoute.get("/users", UserController.GETs);
 publicRoute.get("/users/:name", UserController.GET);
 
+publicRoute.get("/destinations/:slug", DestinationControllers.GET);
 publicRoute.get("/destinations", DestinationControllers.GETs);
 
 export default publicRoute;

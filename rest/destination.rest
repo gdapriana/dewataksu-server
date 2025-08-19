@@ -1,2 +1,34 @@
 ###
-GET http://localhost:5050/destinations
+GET http://localhost:5050/destinations/kuta-beach
+
+###
+GET http://localhost:5050/destinations?search=lebih
+
+
+###
+POST http://localhost:5050/destinations
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJuYW1lIjoiYWRtaW4iLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTU0NDc0MzMsImV4cCI6MTc1NTQ0ODMzM30.D19S4tr8NjAVA39dushxrDqJEMHLNm3V3yXTdglwYqA
+
+{
+    "name": "Pantai Lebih 2",
+    "districtId": "cmebb3bb1000cugnyu7c5gkdl",
+    "categoryId": "cmebb3bav0007ugnye4hvz39d",
+    "tags": ["beach", "beautiful", "sate languan"]
+}
+
+
+### PATCH
+PATCH http://localhost:5050/destinations/cmefwajs70003hziyec5tmu41
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhNzAwMDB1Z255bzk3cDF0Z3UiLCJyb2xlIjoiQURNSU4iLCJpYXQiOjE3NTU1MzI1MDEsImV4cCI6MTc1NTUzMzQwMX0.YGBUxCFTapdeGAcGs8AePlp70miSv0YBarRG4KqNmvU
+
+{
+    "name": "Pantai Lebih 2",
+    "tags": ["hello", "world"],
+    "isPublished": false,
+    "price": 4000,
+    "mapUrl": "https://google.com",
+    "coverId": "sdsadasd",
+    "address": "jl Pantai Lebih, Gianyar Bali"
+}

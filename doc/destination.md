@@ -197,18 +197,12 @@ Retrieves a specific destination by its ID.
     "category": {
       "id": "category_123",
       "name": "Historical Sites",
-      "slug": "historical-sites",
-      "description": "Ancient and historical landmarks"
+      "slug": "historical-sites"
     },
     "district": {
       "id": "district_123",
       "name": "Magelang",
-      "slug": "magelang",
-      "description": "Central Java district",
-      "cover": {
-        "id": "img_456",
-        "url": "https://example.com/images/magelang.jpg"
-      }
+      "slug": "magelang"
     },
     "tags": [
       {
@@ -238,7 +232,9 @@ Retrieves a specific destination by its ID.
         "author": {
           "id": "user_123",
           "name": "johndoe",
-          "fullName": "John Doe"
+          "profileImage": {
+            "url": "..."
+          }
         },
         "createdAt": "2024-01-16T09:00:00.000Z",
         "replies": []
