@@ -1,15 +1,18 @@
+import { BookmarkResponses } from "src/responses/bookmark.response";
 import { LikeResponses } from "src/responses/like.response";
 import { db } from "src/utils/db";
 import { DB_SCHEMA, ErrorResponseMessage, ResponseError } from "src/utils/error-response";
+import { UserPayload } from "src/utils/types";
+import { BookmarkValidations } from "src/validations/bookmark.validation";
 import { LikeValidations } from "src/validations/like.validation";
 import Validation from "src/validations/validation";
 import z from "zod";
 
-export class LikeServices {
-  static readonly table = db.like;
-  static readonly schema: DB_SCHEMA = "like";
-  static readonly validation = LikeValidations;
-  static readonly response = LikeResponses;
+export class BookmarkServices {
+  static readonly table = db.bookmark;
+  static readonly schema: DB_SCHEMA = "bookmark";
+  static readonly validation = BookmarkValidations;
+  static readonly response = BookmarkResponses;
   static async POST(body: z.infer<typeof this.validation.POST>) {
     const validatedRequest = Validation.validate(this.validation.POST, body);
 
@@ -19,14 +22,14 @@ export class LikeServices {
     else checkUser = await this.table.findFirst({ where: { AND: { userId: validatedRequest.userId, storyId: validatedRequest.schemaId } } });
     if (checkUser) throw new ResponseError(ErrorResponseMessage.ALREADY_EXISTS(this.schema));
 
-    let liked;
+    let bookmarked;
     if (validatedRequest.schema === "destinations")
-      liked = await this.table.create({ data: { userId: validatedRequest.userId, destinationId: validatedRequest.schemaId }, select: LikeResponses.POST });
+      bookmarked = await this.table.create({ data: { userId: validatedRequest.userId, destinationId: validatedRequest.schemaId }, select: LikeResponses.POST });
     else if (validatedRequest.schema === "traditions")
-      liked = await this.table.create({ data: { userId: validatedRequest.userId, traditionId: validatedRequest.schemaId }, select: LikeResponses.POST });
-    else liked = await this.table.create({ data: { userId: validatedRequest.userId, storyId: validatedRequest.schemaId }, select: LikeResponses.POST });
+      bookmarked = await this.table.create({ data: { userId: validatedRequest.userId, traditionId: validatedRequest.schemaId }, select: LikeResponses.POST });
+    else bookmarked = await this.table.create({ data: { userId: validatedRequest.userId, storyId: validatedRequest.schemaId }, select: LikeResponses.POST });
 
-    return liked;
+    return bookmarked;
   }
 
   static async DELETE(id: string) {

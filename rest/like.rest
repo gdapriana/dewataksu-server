@@ -12,5 +12,5 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhO
 
 ### DELETE
 
-DELETE http://localhost:5050/like/sdsad
+DELETE http://localhost:5050/like/cmeij87xf0001ugum55tq1vhe
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNtZWJiM2JhODAwMDJ1Z255ZTg2dnJnbGwiLCJuYW1lIjoidXNlcl8yIiwicm9sZSI6IlVTRVIiLCJpYXQiOjE3NTU2MDcwMDgsImV4cCI6MTc1NTYwNzkwOH0.5fItLz8p-hA4r6jbll5Z1Yv_Fk-wQeto_A_MIWvEKKs
