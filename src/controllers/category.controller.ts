@@ -1,33 +1,19 @@
 import { NextFunction, Request, Response } from "express";
-import { DestinationServices } from "src/services/destination.service";
+import { CategoryServices } from "src/services/category.service";
 import { UserRequest } from "src/utils/types";
 
-export class DestinationControllers {
-  static async GET(req: Request, res: Response, next: NextFunction) {
-    try {
-      const { slug } = req.params;
-      const result = await DestinationServices.GET(slug);
-      res.status(200).json({
-        success: true,
-        result,
-        message: "Get destination successfully",
-      });
-    } catch (e) {
-      console.error(e);
-      next(e);
-    }
-  }
+export class CategoryControllers {
   static async GETs(req: Request, res: Response, next: NextFunction) {
     try {
       const query = req.query as any;
-      const { destinations, pagination } = await DestinationServices.GETs(query);
+      const { categories, pagination } = await CategoryServices.GETs(query);
       res.status(200).json({
         success: true,
         result: {
-          destinations,
+          categories,
           pagination,
         },
-        message: "Get destinations successfully",
+        message: "Gets categories successfully",
       });
     } catch (e) {
       console.error(e);
@@ -37,11 +23,11 @@ export class DestinationControllers {
   static async POST(req: UserRequest, res: Response, next: NextFunction) {
     try {
       const body = req.body;
-      const result = await DestinationServices.POST(req.user!, body);
+      const result = await CategoryServices.POST(req.user!, body);
       res.status(200).json({
         success: true,
         result,
-        message: "Create destination successfully",
+        message: "Create category successfully",
       });
     } catch (e) {
       console.error(e);
@@ -50,13 +36,13 @@ export class DestinationControllers {
   }
   static async PATCH(req: UserRequest, res: Response, next: NextFunction) {
     try {
-      const { id } = req.params;
       const body = req.body;
-      const result = await DestinationServices.PATCH(req.user!, id, body);
+      const { id } = req.params;
+      const result = await CategoryServices.PATCH(req.user!, id, body);
       res.status(200).json({
         success: true,
         result,
-        message: "Destination updated successfully",
+        message: "Update category successfully",
       });
     } catch (e) {
       console.error(e);
@@ -66,11 +52,11 @@ export class DestinationControllers {
   static async DELETE(req: UserRequest, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const result = await DestinationServices.DELETE(req.user!, id);
+      const result = await CategoryServices.DELETE(req.user!, id);
       res.status(200).json({
         success: true,
         result,
-        message: "Destination deleted successfully",
+        message: "Delete category successfully",
       });
     } catch (e) {
       console.error(e);

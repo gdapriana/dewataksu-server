@@ -1,5 +1,6 @@
 import express from "express";
 import { BookmarkControllers } from "src/controllers/bookmark.controller";
+import { CategoryControllers } from "src/controllers/category.controller";
 import { CommentControllers } from "src/controllers/comment.controller";
 import { LikeControllers } from "src/controllers/like.controller";
 import { UserAuthController, UserController } from "src/controllers/user.controller";
@@ -15,4 +16,5 @@ userRoute.post("/bookmark", BookmarkControllers.POST);
 userRoute.delete("/bookmark/:id", BookmarkControllers.DELETE);
 userRoute.post("/comment", CommentControllers.POST);
 userRoute.delete("/comment/:id", CommentControllers.DELETE);
+
 export default userRoute;
