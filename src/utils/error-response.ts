@@ -33,7 +33,7 @@ export class ErrorResponseMessage {
     };
   }
 
-  static NOT_FOUND(schema: DB_SCHEMA): ErrorResponse {
+  static NOT_FOUND(schema: DB_SCHEMA | string): ErrorResponse {
     return {
       status: 404,
       message: `${schema} not found.`,
