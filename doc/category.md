@@ -7,8 +7,7 @@ The Category API provides endpoints for managing destination categories. It incl
 ## Base URLs
 
 ```
-/categories (Public endpoints)
-/admin/categories (Admin endpoints)
+/categories
 ```
 
 ## Authentication
