@@ -1,6 +1,7 @@
 import express from "express";
 import { CategoryControllers } from "src/controllers/category.controller";
 import { DestinationControllers } from "src/controllers/destination.controller";
+import { DistrictControllers } from "src/controllers/district.controller";
 import { UserController } from "src/controllers/user.controller";
 import adminMiddleware from "src/middlewares/admin.middleware";
 
@@ -15,5 +16,9 @@ adminRoute.delete("/destinations/:id", DestinationControllers.DELETE);
 adminRoute.post("/categories", CategoryControllers.POST);
 adminRoute.patch("/categories/:id", CategoryControllers.PATCH);
 adminRoute.delete("/categories/:id", CategoryControllers.DELETE);
+
+adminRoute.post("/districts", DistrictControllers.POST);
+adminRoute.patch("/districts/:id", DistrictControllers.PATCH);
+adminRoute.delete("/districts/:id", DistrictControllers.DELETE);
 
 export default adminRoute;

@@ -1,6 +1,7 @@
 import express from "express";
 import { CategoryControllers } from "src/controllers/category.controller";
 import { DestinationControllers } from "src/controllers/destination.controller";
+import { DistrictControllers } from "src/controllers/district.controller";
 import { UserAuthController, UserController } from "src/controllers/user.controller";
 
 const publicRoute = express.Router();
@@ -16,5 +17,8 @@ publicRoute.get("/destinations/:slug", DestinationControllers.GET);
 publicRoute.get("/destinations", DestinationControllers.GETs);
 
 publicRoute.get("/categories", CategoryControllers.GETs);
+
+publicRoute.get("/districts/:slug", DistrictControllers.GET);
+publicRoute.get("/districts", DistrictControllers.GETs);
 
 export default publicRoute;
