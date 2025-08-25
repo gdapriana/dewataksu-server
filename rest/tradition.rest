@@ -1,0 +1,3 @@
+### GETs
+GET http://localhost:5050/traditions
+

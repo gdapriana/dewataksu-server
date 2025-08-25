@@ -206,9 +206,9 @@ export class DestinationServices {
   }
   static async DELETE(user: UserPayload, id: z.infer<typeof this.validation.DELETE>) {
     const idValidation = Validation.validate(this.validation.DELETE, id);
-    const checkItem = await this.table.findUnique({ where: { id }, select: { id: true } });
+    const checkItem = await this.table.findUnique({ where: { id: idValidation }, select: { id: true } });
     if (!checkItem) throw new ResponseError(ErrorResponseMessage.NOT_FOUND(this.schema));
-    const deletedItem = await this.table.delete({ where: { id }, select: { id: true } });
+    const deletedItem = await this.table.delete({ where: { id: idValidation }, select: { id: true } });
     await db.activityLog.create({
       data: {
         action: "DELETE",
