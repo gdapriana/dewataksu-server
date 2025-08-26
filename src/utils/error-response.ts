@@ -4,6 +4,7 @@ interface ErrorResponse {
 }
 
 export type DB_SCHEMA = "user" | "activity" | "gallery" | "district" | "image" | "category" | "like" | "tag" | "user" | "destination" | "tradition" | "story" | "comment" | "bookmark";
+export type ACTIONS = "create" | "get" | "gets" | "update" | "delete";
 
 export class ErrorResponseMessage {
   static INVALID_USERNAME_PASSWORD(): ErrorResponse {

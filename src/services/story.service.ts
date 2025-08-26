@@ -6,18 +6,18 @@ import z from "zod";
 import slugify from "slugify";
 import { slugOptions } from "src/utils/slugify";
 import { UserPayload } from "src/utils/types";
-import { TraditionValidations } from "src/validations/tradition.validation";
-import { TraditionResponses } from "src/responses/tradition.response";
+import { StoryValidations } from "src/validations/story.validation";
+import { StoryResponses } from "src/responses/story.response";
 
-export class TraditionServices {
-  static readonly table = db.tradition;
-  static readonly schema: DB_SCHEMA = "tradition";
-  static readonly validation = TraditionValidations;
-  static readonly response = TraditionResponses;
+export class StoryServices {
+  static readonly table = db.story;
+  static readonly schema: DB_SCHEMA = "story";
+  static readonly validation = StoryValidations;
+  static readonly response = StoryResponses;
 
   static async GET(slug: z.infer<typeof this.validation.GET>) {
     const validatedSlug = Validation.validate(this.validation.GET, slug);
-    const checkItem = await this.table.findUnique({ where: { slug: validatedSlug }, select: this.response.GET });
+    const checkItem = await this.table.findUnique({ where: { slug: validatedSlug }, include: this.response.GET });
     if (!checkItem) throw new ResponseError(ErrorResponseMessage.NOT_FOUND(this.schema));
     return checkItem;
   }
@@ -29,7 +29,7 @@ export class TraditionServices {
     const limit = validatedQuery.limit || 10;
     const skip = (page - 1) * limit;
 
-    const where: Prisma.TraditionWhereInput = {};
+    const where: Prisma.StoryWhereInput = {};
 
     if (query.isPublished) {
       where.isPublished = query.isPublished === "1";
@@ -39,9 +39,9 @@ export class TraditionServices {
       where.OR = [{ name: { contains: validatedQuery.search, mode: "insensitive" } }, { content: { contains: validatedQuery.search, mode: "insensitive" } }];
     }
 
-    const [total, traditions] = await db.$transaction([
-      db.tradition.count({ where }),
-      db.tradition.findMany({
+    const [total, stories] = await db.$transaction([
+      db.story.count({ where }),
+      db.story.findMany({
         where,
         skip,
         take: limit,
@@ -61,7 +61,7 @@ export class TraditionServices {
       hasNext: page < totalPages,
       hasPrev: page > 1,
     };
-    return { traditions, pagination };
+    return { stories, pagination };
   }
 
   static async POST(user: UserPayload, body: z.infer<typeof this.validation.POST>) {
@@ -71,13 +71,12 @@ export class TraditionServices {
     const checkItem = await this.table.findUnique({ where: { slug } });
     if (checkItem) throw new ResponseError(ErrorResponseMessage.ALREADY_EXISTS(this.schema));
 
-    const createData: Prisma.TraditionCreateInput = {
-      ...validatedBody,
-      slug,
-    };
-
     const newItem = await this.table.create({
-      data: { ...createData },
+      data: {
+        ...validatedBody,
+        slug,
+        userId: user.id,
+      },
       select: this.response.POST,
     });
 
@@ -86,7 +85,7 @@ export class TraditionServices {
         action: "CREATE",
         userId: user.id,
         schemaId: newItem.id,
-        schema: "TRADITION",
+        schema: "STORY",
       },
     });
 
@@ -109,18 +108,17 @@ export class TraditionServices {
       let newSlug = undefined;
       if (validatedBody.name) {
         newSlug = slugify(validatedBody.name, slugOptions);
-        const checkSlug = await tx.tradition.findUnique({
+        const checkSlug = await tx.story.findUnique({
           where: { slug: newSlug },
           select: { slug: true },
         });
         if (checkSlug) throw new ResponseError(ErrorResponseMessage.ALREADY_EXISTS(this.schema));
       }
 
-      return tx.tradition.update({
-        where: { id: id },
+      return tx.story.update({
+        where: { id },
         data: {
           ...validatedBody,
-          slug: newSlug,
         },
         select: this.response.PATCH,
       });
@@ -129,7 +127,7 @@ export class TraditionServices {
       data: {
         userId: user.id,
         action: "UPDATE",
-        schema: "DISTRICT",
+        schema: "STORY",
         schemaId: updatedItem.id,
       },
     });
@@ -143,7 +141,7 @@ export class TraditionServices {
     await db.activityLog.create({
       data: {
         action: "DELETE",
-        schema: "TRADITION",
+        schema: "STORY",
         schemaId: deletedItem.id,
         userId: user.id,
       },

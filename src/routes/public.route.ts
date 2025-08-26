@@ -2,6 +2,7 @@ import express from "express";
 import { CategoryControllers } from "src/controllers/category.controller";
 import { DestinationControllers } from "src/controllers/destination.controller";
 import { DistrictControllers } from "src/controllers/district.controller";
+import { StoryControllers } from "src/controllers/story.controller";
 import { TraditionControllers } from "src/controllers/tradition.controller";
 import { UserAuthController, UserController } from "src/controllers/user.controller";
 
@@ -19,6 +20,9 @@ publicRoute.get("/destinations", DestinationControllers.GETs);
 
 publicRoute.get("/traditions/:slug", TraditionControllers.GET);
 publicRoute.get("/traditions", TraditionControllers.GETs);
+
+publicRoute.get("/stories/:slug", StoryControllers.GET);
+publicRoute.get("/stories", StoryControllers.GETs);
 
 publicRoute.get("/categories", CategoryControllers.GETs);
 

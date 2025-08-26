@@ -93,6 +93,15 @@ export class DistrictServices {
     const checkItem = await this.table.findUnique({ where: { id }, select: { id: true } });
     if (!checkItem) throw new ResponseError(ErrorResponseMessage.NOT_FOUND(this.schema));
     let newSlug = undefined;
+
+    Object.keys(validatedBody).forEach((key) => {
+      const typedKey = key as keyof typeof validatedBody;
+      const checkItemKey = key as keyof typeof checkItem;
+      if (validatedBody[typedKey] === checkItem[checkItemKey]) {
+        validatedBody[typedKey] = undefined;
+      }
+    });
+
     if (validatedBody.name) {
       newSlug = slugify(validatedBody.name, slugOptions);
       const checkSlug = await this.table.findUnique({ where: { slug: newSlug } });
