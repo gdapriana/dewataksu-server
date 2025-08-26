@@ -1,599 +1,366 @@
-# User API Documentation
+# API Documentation: User & Authentication
 
-## Overview
+This document covers all endpoints related to user management and the authentication process.
 
-The User API provides endpoints for managing user accounts, including registration, authentication, profile management, and user data operations.
+## 🏢 Data Model: User
 
-## Base URL
+The `User` object has the following data structure, based on the Prisma schema:
 
-```
-/api/users
-```
+| Field            | Type                    | Description                                        |
+| :--------------- | :---------------------- | :------------------------------------------------- |
+| `id`             | `String` (CUID)         | A unique identifier for the user.                  |
+| `email`          | `String` (Optional)     | The user's unique email address.                   |
+| `name`           | `String`                | The user's unique username.                        |
+| `fullName`       | `String` (Optional)     | The user's full name.                              |
+| `password`       | `String` (Optional)     | The user's hashed password.                        |
+| `bio`            | `String` (Optional)     | A short biography of the user.                     |
+| `refreshToken`   | `String` (Optional)     | The token used to refresh the access token.        |
+| `profileImageId` | `String` (Optional)     | The ID of the linked profile image.                |
+| `role`           | `Enum` (`USER`/`ADMIN`) | The user's role in the system, defaults to `USER`. |
+| `createdAt`      | `DateTime`              | The timestamp when the user was created.           |
+| `updatedAt`      | `DateTime`              | The timestamp when the user was last updated.      |
 
-## Authentication
+---
 
-Most endpoints require authentication via Bearer token in the Authorization header:
+## 🔐 Authentication
 
-```
-Authorization: Bearer <your_jwt_token>
+Endpoints that require authentication must include a **JWT Access Token** in the `Authorization` header.
+
+**Example Header:**
+
+```http
+Authorization: Bearer <ACCESS_TOKEN>
 ```
 
 ---
 
 ## Endpoints
 
-### 1. Create User (Registration)
+The endpoints are divided into three categories: **Public**, **Authenticated (User)**, and **Admin**.
 
-Creates a new user account.
+### 🌐 Public Endpoints
 
-**Endpoint:** `POST /api/users`
+These endpoints can be accessed without authentication.
 
-**Authentication:** Not required
+#### 1. Register a New User
 
-**Request Body:**
+Registers a new user in the system.
 
-| Field    | Type   | Required | Example                                            |
-| -------- | ------ | -------- | -------------------------------------------------- |
-| email    | string | No       | `"john.doe@example.com"`                           |
-| name     | string | Yes      | `"johndoe"`                                        |
-| fullName | string | No       | `"John Doe"`                                       |
-| password | string | Yes      | `"securePassword123"`                              |
-| bio      | string | No       | `"Software developer passionate about technology"` |
+- **Method**: `POST`
+- **Endpoint**: `/register`
 
-**Response:**
+**Request Body**
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `name` | `string` | Yes | Username, min 3 characters, max 30. |
+| `password` | `string` | Yes | User's password. |
+| `email` | `string` | No | Email address. Must be a valid email format. |
+| `fullName`| `string` | No | Full name, min 3 characters, max 50. |
+| `bio` | `string` | No | Biography, max 200 characters. |
+
+**Example Request Body:**
 
 ```json
 {
-  "success": true,
-  "result": {
-    "id": "clh7x2y3z0000qwerty123"
-  },
-  "message": "User created successfully"
+  "name": "johndoe",
+  "password": "Password123",
+  "email": "johndoe@example.com",
+  "fullName": "John Doe"
 }
 ```
 
-**Status Codes:**
-
-- `201` - User created successfully
-- `400` - Validation error or missing required fields
-- `409` - Email or username already exists
-
----
-
-### 2. Login
-
-User login
-
-**Endpoint:** `POST /api/users/login`
-
-**Authentication:** Not required
-
-**Request Body:**
-
-| Field    | Type   | Required | Example               |
-| -------- | ------ | -------- | --------------------- |
-| name     | string | Yes      | `"johndoe"`           |
-| password | string | Yes      | `"securePassword123"` |
-
-**Response:**
+**Success Response (200 OK):**
 
 ```json
 {
   "success": true,
+  "message": "User created successfully",
   "result": {
-    "accessToken": "clh7x2y3z0000qwerty123"
-  },
-  "message": "User created successfully"
+    "id": "clwdb9xkb000008l430s1h1g1"
+  }
 }
 ```
 
-**Status Codes:**
+**Possible Errors:**
 
-- `200` - User login success
-- `400` - Validation error or missing required fields
-- `409` - Email or username already exists
+- `400 Bad Request`: If validation fails (e.g., username is too short) or the username already exists.
 
 ---
 
-### 3. Get Token
+#### 2. User Login
 
-Get user access token while old token is expired
+Authenticates a user and returns an access token.
 
-**Endpoint:** `GET /api/token`
+- **Method**: `POST`
+- **Endpoint**: `/login`
 
-**Authentication:** Required
+**Request Body**
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `name` | `string` | Yes | User's username. |
+| `password` | `string` | Yes | User's password (min 8 characters, must contain uppercase, lowercase, and a number). |
 
-**Response:**
+**Example Request Body:**
 
 ```json
 {
-  "success": true,
-  "result": {
-    "accessToken": "clh7x2y3z0000qwerty123"
-  },
-  "message": "New token generated succesfully"
+  "name": "johndoe",
+  "password": "Password123"
 }
 ```
 
-**Status Codes:**
+**Success Response (200 OK):**
 
-- `200` - User login success
-- `400` - Validation error or missing required fields
-- `409` - Email or username already exists
-
----
-
-### 4. Get All Users
-
-Retrieves a paginated list of users.
-
-**Endpoint:** `GET /api/users`
-
-**Authentication:** Required (Admin role)
-
-**Query Parameters:**
-
-- `page` (optional): Page number (default: 1)
-- `limit` (optional): Items per page (default: 10, max: 100)
-- `search` (optional): Search by name, fullName, or email
-- `role` (optional): Filter by user role
-
-**Example Request:**
-
-```
-GET /api/users?page=1&limit=10&search=john&role=USER
-```
-
-**Response:**
+- The `refreshToken` is stored in an `httpOnly` cookie.
 
 ```json
 {
   "success": true,
-  "data": {
+  "message": "User login successfully",
+  "result": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+**Possible Errors:**
+
+- `400 Bad Request`: If the username or password is invalid.
+
+---
+
+#### 3. Refresh Access Token
+
+Generates a new access token using the `refreshToken` from the cookie.
+
+- **Method**: `GET`
+- **Endpoint**: `/token`
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "New token generated successfully",
+  "result": {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+  }
+}
+```
+
+**Possible Errors:**
+
+- `401 Unauthorized`: If the `refreshToken` cookie is missing.
+- `403 Forbidden`: If the `refreshToken` is invalid or not found in the database.
+
+---
+
+#### 4. Get a List of Users
+
+Retrieves a list of all users with filtering and pagination.
+
+- **Method**: `GET`
+- **Endpoint**: `/users`
+
+**Query Parameters**
+| Parameter | Type | Description | Default |
+| :--- | :--- | :--- | :--- |
+| `page` | `number` | The current page number. | `1` |
+| `limit` | `number` | The number of items per page. | `10` |
+| `search` | `string` | Search by `name`, `email`, or `fullName`. | - |
+| `role` | `string` | Filter by role (`USER` or `ADMIN`). | - |
+| `sortBy` | `string` | Sort by (`createdAt` or `updatedAt`).| `createdAt` |
+| `orderBy`| `string` | Sort direction (`asc` or `desc`). | `desc` |
+
+**Success Response (200 OK):**
+
+```json
+{
+  "success": true,
+  "message": "gets user successfully",
+  "result": {
     "users": [
       {
-        "id": "clh7x2y3z0000qwerty123",
-        "email": "john.doe@example.com",
+        "id": "clwdb9xkb000008l430s1h1g1",
+        "email": "johndoe@example.com",
         "name": "johndoe",
         "fullName": "John Doe",
-        "bio": "Software developer passionate about technology",
+        "bio": "A passionate developer.",
         "role": "USER",
-        "profileImage": {
-          "id": "img_123",
-          "url": "https://example.com/images/profile.jpg",
-          "alt": "Profile picture"
-        },
-        "createdAt": "2024-01-15T10:30:00.000Z",
-        "updatedAt": "2024-01-15T10:30:00.000Z"
+        "createdAt": "2025-08-27T10:00:00.000Z",
+        "updatedAt": "2025-08-27T10:00:00.000Z",
+        "profileImage": null
       }
     ],
     "pagination": {
       "page": 1,
       "limit": 10,
-      "total": 25,
-      "pages": 3,
-      "hasNext": true,
+      "total": 1,
+      "pages": 1,
+      "hasNext": false,
       "hasPrev": false
     }
   }
 }
 ```
 
-**Status Codes:**
-
-- `200` - Users retrieved successfully
-- `401` - Unauthorized
-- `403` - Forbidden (insufficient permissions)
-
 ---
 
-### 5. Get User by ID
+#### 5. Get User by Username
 
-Retrieves a specific user by their ID.
+Retrieves a single user's details by their `name` (username).
 
-**Endpoint:** `GET /api/users/:id`
+- **Method**: `GET`
+- **Endpoint**: `/users/:name`
 
-**Authentication:** Required
+**Path Parameters**
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `name` | `string` | The unique username of the user. |
 
-**Path Parameters:**
-
-- `id`: User ID (string)
-
-**Response:**
+**Success Response (200 OK):**
 
 ```json
 {
   "success": true,
-  "data": {
-    "id": "clh7x2y3z0000qwerty123",
-    "email": "john.doe@example.com",
-    "name": "johndoe",
+  "message": "get user successfully",
+  "result": {
+    "id": "clwdb9xkb000008l430s1h1g1",
     "fullName": "John Doe",
-    "bio": "Software developer passionate about technology",
-    "role": "USER",
-    "profileImage": {
-      "id": "img_123",
-      "url": "https://example.com/images/profile.jpg"
-    },
-    "stories": [
-      {
-        "id": "story_123",
-        "name": "My First Story",
-        "slug": "my-first-story"
-        "createdAt": "2024-01-16T09:00:00.000Z",
-        "updatedAt": "2024-01-16T09:00:00.000Z"
-      }
-    ],
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z",
+    "name": "johndoe",
     "_count": {
-      "likes": 0,
-      "bookmarks": 0,
-      "stories": 0,
-      "comment": 0,
-      "activityLogs": 0
-    }
+      "stories": 5,
+      "likes": 12,
+      "bookmarks": 3,
+      "comments": 8
+    },
+    "bio": "A passionate developer.",
+    "email": "johndoe@example.com",
+    "stories": [],
+    "createdAt": "2025-08-27T10:00:00.000Z",
+    "updatedAt": "2025-08-27T10:00:00.000Z",
+    "role": "USER"
   }
 }
 ```
 
-**Status Codes:**
+**Possible Errors:**
 
-- `200` - User retrieved successfully
-- `401` - Unauthorized
-- `404` - User not found
+- `404 Not Found`: If a user with the specified `name` is not found.
 
 ---
 
-### 6. Get Current User Profile
+### 👤 Authenticated User Endpoints
 
-Retrieves the authenticated user's profile.
+These endpoints require a **valid token** (the user must be logged in).
 
-**Endpoint:** `GET /api/me`
+#### 1. Get Current User's Profile
 
-**Authentication:** Required
+Retrieves the profile details of the currently logged-in user.
 
-**Response:**
+- **Method**: `GET`
+- **Endpoint**: `/me`
+- **Authentication**: **Required**
 
-```json
-{
-  "success": true,
-  "data": {
-    "id": "clh7x2y3z0000qwerty123",
-    "email": "john.doe@example.com",
-    "name": "johndoe",
-    "fullName": "John Doe",
-    "bio": "Software developer passionate about technology",
-    "role": "USER",
-    "profileImage": {
-      "id": "img_123",
-      "url": "https://example.com/images/profile.jpg",
-      "alt": "Profile picture"
-    },
-    "_count": {
-      "likes": 0,
-      "bookmarks": 0,
-      "stories": 0,
-      "comment": 0,
-      "activityLogs": 0
-    },
-    "createdAt": "2024-01-15T10:30:00.000Z",
-    "updatedAt": "2024-01-15T10:30:00.000Z"
-  }
-}
-```
-
-**Status Codes:**
-
-- `200` - Profile retrieved successfully
-- `401` - Unauthorized
-
----
-
-### 7. Update User
-
-Updates user information. Users can only update their own profile unless they have admin privileges.
-
-**Endpoint:** `PUT /api/users/:id`
-
-**Authentication:** Required
-
-**Path Parameters:**
-
-- `id`: User ID (string)
-
-**Request Body:**
-
-| Field        | Type   | Required | Example                                                |
-| ------------ | ------ | -------- | ------------------------------------------------------ |
-| fullName     | string | No       | `"John Michael Doe"`                                   |
-| bio          | string | No       | `"Senior Software Developer with 5+ years experience"` |
-| profileImage | object | No       | {"url": "...", "publicId": "..."}                      |
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "clh7x2y3z0000qwerty123"
-  },
-  "message": "User updated successfully"
-}
-```
-
-**Status Codes:**
-
-- `200` - User updated successfully
-- `400` - Validation error
-- `401` - Unauthorized
-- `403` - Forbidden (can't update other users)
-- `404` - User not found
-- `409` - Username already exists (if updating name)
-
----
-
-### 8. Update User Password
-
-Updates the user's password.
-
-**Endpoint:** `PATCH /api/users/:id/password`
-
-**Authentication:** Required
-
-**Path Parameters:**
-
-- `id`: User ID (string)
-
-**Request Body:**
-
-| Field           | Type   | Required | Example                  |
-| --------------- | ------ | -------- | ------------------------ |
-| currentPassword | string | Yes      | `"oldPassword123"`       |
-| newPassword     | string | Yes      | `"newSecurePassword456"` |
-| confirmPassword | string | Yes      | `"newSecurePassword456"` |
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "message": "Password updated successfully"
-}
-```
-
-**Status Codes:**
-
-- `200` - Password updated successfully
-- `400` - Validation error or passwords don't match
-- `401` - Unauthorized or incorrect current password
-- `403` - Forbidden
-- `404` - User not found
-
----
-
-### 9. Update User Role
-
-Updates a user's role (Admin only).
-
-**Endpoint:** `PATCH /api/users/:id/role`
-
-**Authentication:** Required (Admin only)
-
-**Path Parameters:**
-
-- `id`: User ID (string)
-
-**Request Body:**
-
-| Field | Type   | Required | Example               |
-| ----- | ------ | -------- | --------------------- |
-| role  | string | Yes      | `"ADMIN"` or `"USER"` |
-
-**Response:**
-
-```json
-{
-  "success": true,
-  "data": {
-    "id": "clh7x2y3z0000qwerty123",
-    "name": "johndoe",
-    "fullName": "John Doe",
-    "role": "ADMIN",
-    "updatedAt": "2024-01-20T16:30:00.000Z"
-  },
-  "message": "User role updated successfully"
-}
-```
-
-**Status Codes:**
-
-- `200` - Role updated successfully
-- `400` - Invalid role
-- `401` - Unauthorized
-- `403` - Forbidden (Admin access required)
-- `404` - User not found
-
----
-
-### 10. Delete User
-
-Deletes a user account. Users can only delete their own account unless they have admin privileges.
-
-**Endpoint:** `DELETE /api/users/:id`
-
-**Authentication:** Required
-
-**Path Parameters:**
-
-- `id`: User ID (string)
-
-**Request Body (for confirmation):**
-
-| Field           | Type    | Required | Example             |
-| --------------- | ------- | -------- | ------------------- |
-| confirmDeletion | boolean | Yes      | `true`              |
-| password        | string  | Yes      | `"userPassword123"` |
-
-**Response:**
+**Success Response (200 OK):**
+The response is identical to "Get User by Username".
 
 ```json
 {
   "success": true,
   "result": {
-    "id": "...."
-  },
-  "message": "User account deleted successfully"
+    "id": "clwdb9xkb000008l430s1h1g1",
+    "fullName": "John Doe",
+    "name": "johndoe"
+    // ... other user details
+  }
 }
 ```
 
-**Status Codes:**
+**Possible Errors:**
 
-- `200` - User deleted successfully
-- `400` - Missing confirmation or incorrect password
-- `401` - Unauthorized
-- `403` - Forbidden (can't delete other users)
-- `404` - User not found
+- `403 Forbidden`: If the token is invalid or missing.
 
 ---
 
-### 11. Get User Activity
+#### 2. Update User Profile
 
-Retrieves user's activity logs.
+Updates a user's data. A regular user can only update their own profile. An admin can update any user's profile via their ID.
 
-**Endpoint:** `GET /api/users/:id/activity`
+- **Method**: `PATCH`
+- **Endpoint**: `/users/:id`
+- **Authentication**: **Required**
 
-**Authentication:** Required
+**Path Parameters**
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `string` | The CUID of the user to be updated. |
 
-**Path Parameters:**
+**Request Body**
+| Field | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `fullName`| `string` | No | New full name, min 3, max 50 characters. |
+| `bio` | `string` | No | New biography, max 200 characters. |
+| `profileImageId`|`string`| No | CUID of the new profile image. |
 
-- `id`: User ID (string)
+**Example Request Body:**
 
-**Query Parameters:**
+```json
+{
+  "fullName": "John Doe Updated",
+  "bio": "An even more passionate developer."
+}
+```
 
-- `page` (optional): Page number (default: 1)
-- `limit` (optional): Items per page (default: 20)
-- `type` (optional): Filter by activity type
-
-**Response:**
+**Success Response (200 OK):**
 
 ```json
 {
   "success": true,
-  "data": {
-    "activities": [
-      {
-        "id": "activity_123",
-        "type": "STORY_CREATED",
-        "description": "Created a new story",
-        "metadata": {
-          "storyId": "story_456",
-          "storyTitle": "My Journey"
-        },
-        "createdAt": "2024-01-20T10:15:00.000Z"
-      }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 45,
-      "pages": 3,
-      "hasNext": true,
-      "hasPrev": false
-    }
+  "message": "update user successfully",
+  "result": {
+    "id": "clwdb9xkb000008l430s1h1g1"
   }
 }
 ```
 
-**Status Codes:**
+**Possible Errors:**
 
-- `200` - Activity retrieved successfully
-- `401` - Unauthorized
-- `403` - Forbidden (can only view own activity)
-- `404` - User not found
+- `404 Not Found`: If a user with the specified `id` is not found.
+- `400 Bad Request`: If the request body validation fails.
 
 ---
 
-## Data Models
+### 🛡️ Admin Endpoints
 
-### User Object
+These endpoints require both a **valid token** and an **Admin role**.
 
-```json
-{
-  "id": "string", // Unique identifier (cuid)
-  "email": "string|null", // Email address (unique)
-  "name": "string", // Username (unique)
-  "fullName": "string|null", // Full display name
-  "password": "string|null", // Hashed password (never returned in responses)
-  "bio": "string|null", // User biography
-  "refreshToken": "string|null", // JWT refresh token (internal use)
-  "role": "USER|ADMIN", // User role
-  "profileImage": "Image|null", // Profile image object
-  "stories": "Story[]", // User's stories (when included)
-  "likes": "Like[]", // User's likes (when included)
-  "bookmarks": "Bookmark[]", // User's bookmarks (when included)
-  "comments": "Comment[]", // User's comments (when included)
-  "activityLogs": "ActivityLog[]", // User's activity logs (when included)
-  "createdAt": "string", // ISO 8601 timestamp
-  "updatedAt": "string" // ISO 8601 timestamp
-}
-```
+#### 1. Delete a User
 
----
+Deletes a user by their ID.
 
-## Error Responses
+- **Method**: `DELETE`
+- **Endpoint**: `/users/:id`
+- **Authentication**: **Admin Required**
 
-All error responses follow this format:
+**Path Parameters**
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `id` | `string` | The CUID of the user to be deleted. |
+
+**Success Response (200 OK):**
 
 ```json
 {
-  "success": false,
-  "error": {
-    "code": "ERROR_CODE",
-    "message": "Human readable error message",
-    "details": "Additional error details (optional)"
+  "success": true,
+  "message": "delete user successfully",
+  "result": {
+    "id": "clwdbe4yf000108l4g8h35k4a"
   }
 }
 ```
 
-### Common Error Codes
+**Possible Errors:**
 
-- `VALIDATION_ERROR` - Request validation failed
-- `UNAUTHORIZED` - Authentication required
-- `FORBIDDEN` - Insufficient permissions
-- `NOT_FOUND` - Resource not found
-- `CONFLICT` - Resource already exists
-- `INTERNAL_ERROR` - Server error
-
----
-
-## Rate Limiting
-
-The API implements rate limiting:
-
-- **General endpoints:** 100 requests per minute per IP
-- **Authentication endpoints:** 10 requests per minute per IP
-- **Profile updates:** 20 requests per hour per user
-
-When rate limit is exceeded:
-
-```json
-{
-  "success": false,
-  "error": {
-    "code": "RATE_LIMIT_EXCEEDED",
-    "message": "Too many requests. Please try again later."
-  }
-}
-```
-
----
-
-## Notes
-
-1. **Password Security:** Passwords are hashed using bcrypt before storage
-2. **Data Privacy:** Password and refreshToken fields are never returned in API responses
-3. **Cascade Deletion:** When a user is deleted, their profile image is also deleted (if not used elsewhere)
-4. **Unique Constraints:** Both email and name (username) must be unique across all users
-5. **Role-based Access:** Some endpoints require specific roles for access
-6. **Soft Deletion:** Consider implementing soft deletion for better data integrity
+- `404 Not Found`: If a user with the specified `id` is not found.
+- `400 Bad Request`: If an admin tries to delete themself or another admin.
