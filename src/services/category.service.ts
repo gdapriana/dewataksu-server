@@ -14,6 +14,7 @@ export class CategoryServices {
   static readonly schema: DB_SCHEMA = "category";
   static readonly validation = CategoryValidations;
   static readonly response = CategoryResponses;
+
   static async GETs(query: z.infer<typeof this.validation.QUERY>) {
     const validatedQuery = Validation.validate(this.validation.QUERY, query);
 

@@ -2,9 +2,7 @@ import { BookmarkResponses } from "src/responses/bookmark.response";
 import { LikeResponses } from "src/responses/like.response";
 import { db } from "src/utils/db";
 import { DB_SCHEMA, ErrorResponseMessage, ResponseError } from "src/utils/error-response";
-import { UserPayload } from "src/utils/types";
 import { BookmarkValidations } from "src/validations/bookmark.validation";
-import { LikeValidations } from "src/validations/like.validation";
 import Validation from "src/validations/validation";
 import z from "zod";
 
@@ -22,21 +20,16 @@ export class BookmarkServices {
     else checkUser = await this.table.findFirst({ where: { AND: { userId: validatedRequest.userId, storyId: validatedRequest.schemaId } } });
     if (checkUser) throw new ResponseError(ErrorResponseMessage.ALREADY_EXISTS(this.schema));
 
-    let bookmarked;
-    if (validatedRequest.schema === "destinations")
-      bookmarked = await this.table.create({ data: { userId: validatedRequest.userId, destinationId: validatedRequest.schemaId }, select: LikeResponses.POST });
-    else if (validatedRequest.schema === "traditions")
-      bookmarked = await this.table.create({ data: { userId: validatedRequest.userId, traditionId: validatedRequest.schemaId }, select: LikeResponses.POST });
-    else bookmarked = await this.table.create({ data: { userId: validatedRequest.userId, storyId: validatedRequest.schemaId }, select: LikeResponses.POST });
-
-    return bookmarked;
+    if (validatedRequest.schema === "destinations") return this.table.create({ data: { userId: validatedRequest.userId, destinationId: validatedRequest.schemaId }, select: LikeResponses.POST });
+    if (validatedRequest.schema === "traditions") return await this.table.create({ data: { userId: validatedRequest.userId, traditionId: validatedRequest.schemaId }, select: LikeResponses.POST });
+    return this.table.create({ data: { userId: validatedRequest.userId, storyId: validatedRequest.schemaId }, select: LikeResponses.POST });
   }
 
   static async DELETE(id: string) {
     const validatedId = Validation.validate(this.validation.DELETE, id);
     const checkItem = await this.table.findUnique({ where: { id: validatedId }, select: { id: true } });
     if (!checkItem) throw new ResponseError(ErrorResponseMessage.NOT_FOUND(this.schema));
-    const deleted = await this.table.delete({ where: { id: validatedId }, select: { id: true } });
+    const deleted = await this.table.delete({ where: { id: validatedId }, select: this.response.DELETE });
     return deleted;
   }
 }

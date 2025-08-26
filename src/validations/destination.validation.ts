@@ -17,7 +17,7 @@ export class DestinationValidations {
       .optional(),
     search: z.string().optional(),
     isPublished: z.enum(["0", "1"]).optional(),
-    sortBy: z.enum(["price", "createdAt", "updatedAt"]).optional().default("createdAt"),
+    sortBy: z.enum(["price", "liked", "bookmarked", "createdAt", "updatedAt"]).optional().default("createdAt"),
     orderBy: z.enum(["asc", "desc"]).optional().default("desc"),
   });
   static readonly POST = z.object({

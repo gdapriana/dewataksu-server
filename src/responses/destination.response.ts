@@ -1,7 +1,15 @@
 import { Prisma } from "@prisma/client";
 
 export class DestinationResponses {
-  static readonly GET: Prisma.DestinationInclude = {
+  static readonly GET: Prisma.DestinationSelect = {
+    id: true,
+    name: true,
+    address: true,
+    isPublished: true,
+    content: true,
+    mapUrl: true,
+    slug: true,
+    price: true,
     cover: {
       select: {
         id: true,

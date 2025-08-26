@@ -17,7 +17,7 @@ export class DestinationServices {
 
   static async GET(slug: z.infer<typeof this.validation.GET>) {
     const validatedSlug = Validation.validate(this.validation.GET, slug);
-    const checkItem = await this.table.findUnique({ where: { slug: validatedSlug }, include: this.response.GET });
+    const checkItem = await this.table.findUnique({ where: { slug: validatedSlug }, select: this.response.GET });
     if (!checkItem) throw new ResponseError(ErrorResponseMessage.NOT_FOUND(this.schema));
     return checkItem;
   }
@@ -45,6 +45,11 @@ export class DestinationServices {
         { tags: { some: { name: { contains: validatedQuery.search, mode: "insensitive" } } } },
       ];
     }
+    let orderBy: Prisma.DestinationOrderByWithRelationInput = {};
+
+    if (validatedQuery.sortBy === "bookmarked") orderBy = { bookmarks: { _count: validatedQuery.orderBy } };
+    else if (validatedQuery.sortBy === "liked") orderBy = { likes: { _count: validatedQuery.orderBy } };
+    else orderBy = { [query.sortBy]: query.orderBy };
 
     const [total, destinations] = await db.$transaction([
       db.destination.count({ where }),
@@ -52,9 +57,7 @@ export class DestinationServices {
         where,
         skip,
         take: limit,
-        orderBy: {
-          [query.sortBy]: query.orderBy,
-        },
+        orderBy,
         select: this.response.GETs,
       }),
     ]);

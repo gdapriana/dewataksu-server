@@ -39,15 +39,19 @@ export class StoryServices {
       where.OR = [{ name: { contains: validatedQuery.search, mode: "insensitive" } }, { content: { contains: validatedQuery.search, mode: "insensitive" } }];
     }
 
+    let orderBy: Prisma.StoryOrderByWithRelationInput = {};
+
+    if (validatedQuery.sortBy === "bookmarked") orderBy = { bookmarks: { _count: validatedQuery.orderBy } };
+    else if (validatedQuery.sortBy === "liked") orderBy = { likes: { _count: validatedQuery.orderBy } };
+    else orderBy = { [query.sortBy]: query.orderBy };
+
     const [total, stories] = await db.$transaction([
       db.story.count({ where }),
       db.story.findMany({
         where,
         skip,
         take: limit,
-        orderBy: {
-          [query.sortBy]: query.orderBy,
-        },
+        orderBy,
         select: this.response.GETs,
       }),
     ]);

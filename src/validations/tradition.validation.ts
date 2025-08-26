@@ -17,7 +17,7 @@ export class TraditionValidations {
       .optional(),
     search: z.string().optional(),
     isPublished: z.enum(["0", "1"]).optional(),
-    sortBy: z.enum(["favorited", "liked", "createdAt", "updatedAt"]).optional().default("createdAt"),
+    sortBy: z.enum(["bookmarked", "liked", "createdAt", "updatedAt"]).optional().default("createdAt"),
     orderBy: z.enum(["asc", "desc"]).optional().default("desc"),
   });
   static readonly POST = z.object({

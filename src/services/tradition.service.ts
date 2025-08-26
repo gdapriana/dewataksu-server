@@ -39,15 +39,19 @@ export class TraditionServices {
       where.OR = [{ name: { contains: validatedQuery.search, mode: "insensitive" } }, { content: { contains: validatedQuery.search, mode: "insensitive" } }];
     }
 
+    let orderBy: Prisma.TraditionOrderByWithRelationInput = {};
+
+    if (validatedQuery.sortBy === "bookmarked") orderBy = { bookmarks: { _count: validatedQuery.orderBy } };
+    else if (validatedQuery.sortBy === "liked") orderBy = { likes: { _count: validatedQuery.orderBy } };
+    else orderBy = { [query.sortBy]: query.orderBy };
+
     const [total, traditions] = await db.$transaction([
       db.tradition.count({ where }),
       db.tradition.findMany({
         where,
         skip,
         take: limit,
-        orderBy: {
-          [query.sortBy]: query.orderBy,
-        },
+        orderBy,
         select: this.response.GETs,
       }),
     ]);
