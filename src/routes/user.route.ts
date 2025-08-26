@@ -1,6 +1,5 @@
 import express from "express";
 import { BookmarkControllers } from "src/controllers/bookmark.controller";
-import { CategoryControllers } from "src/controllers/category.controller";
 import { CommentControllers } from "src/controllers/comment.controller";
 import { LikeControllers } from "src/controllers/like.controller";
 import { StoryControllers } from "src/controllers/story.controller";

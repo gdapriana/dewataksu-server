@@ -1,66 +1,76 @@
 import { NextFunction, Request, Response } from "express";
 import { CategoryServices } from "src/services/category.service";
+import { ACTIONS, DB_SCHEMA } from "src/utils/error-response";
 import { UserRequest } from "src/utils/types";
 
 export class CategoryControllers {
-  static async GETs(req: Request, res: Response, next: NextFunction) {
+  static readonly service = CategoryServices;
+  static readonly schema: DB_SCHEMA = "category";
+
+  static readonly response = (action: ACTIONS) => {
+    return {
+      success: true,
+      message: `${action} ${this.schema} successfully`,
+    };
+  };
+
+  static GETs = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as any;
-      const { categories, pagination } = await CategoryServices.GETs(query);
+      const { categories, pagination } = await this.service.GETs(query);
       res.status(200).json({
-        success: true,
+        ...this.response("gets"),
         result: {
           categories,
           pagination,
         },
-        message: "Gets categories successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async POST(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static POST = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      const result = await CategoryServices.POST(req.user!, body);
+      const result = await this.service.POST(req.user!, body);
       res.status(200).json({
-        success: true,
+        ...this.response("create"),
         result,
-        message: "Create category successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async PATCH(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static PATCH = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
+      const { id } = req.params;
       const body = req.body;
-      const { id } = req.params;
-      const result = await CategoryServices.PATCH(req.user!, id, body);
+      const result = await this.service.PATCH(req.user!, id, body);
       res.status(200).json({
-        success: true,
+        ...this.response("update"),
         result,
-        message: "Update category successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async DELETE(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static DELETE = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const result = await CategoryServices.DELETE(req.user!, id);
+      const result = await this.service.DELETE(req.user!, id);
       res.status(200).json({
-        success: true,
+        ...this.response("delete"),
         result,
-        message: "Delete category successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 }

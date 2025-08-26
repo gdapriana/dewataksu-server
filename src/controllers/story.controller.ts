@@ -6,13 +6,15 @@ import { UserRequest } from "src/utils/types";
 export class StoryControllers {
   static readonly service = StoryServices;
   static readonly schema: DB_SCHEMA = "story";
+
   static readonly response = (action: ACTIONS) => {
     return {
       success: true,
       message: `${action} ${this.schema} successfully`,
     };
   };
-  static async GET(req: Request, res: Response, next: NextFunction) {
+
+  static GET = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { slug } = req.params;
       const result = await this.service.GET(slug);
@@ -24,8 +26,9 @@ export class StoryControllers {
       console.error(e);
       next(e);
     }
-  }
-  static async GETs(req: Request, res: Response, next: NextFunction) {
+  };
+
+  static GETs = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as any;
       const { stories, pagination } = await this.service.GETs(query);
@@ -40,8 +43,9 @@ export class StoryControllers {
       console.error(e);
       next(e);
     }
-  }
-  static async POST(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static POST = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
       const result = await this.service.POST(req.user!, body);
@@ -53,8 +57,9 @@ export class StoryControllers {
       console.error(e);
       next(e);
     }
-  }
-  static async PATCH(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static PATCH = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const body = req.body;
@@ -67,8 +72,9 @@ export class StoryControllers {
       console.error(e);
       next(e);
     }
-  }
-  static async DELETE(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static DELETE = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const result = await this.service.DELETE(req.user!, id);
@@ -80,5 +86,5 @@ export class StoryControllers {
       console.error(e);
       next(e);
     }
-  }
+  };
 }

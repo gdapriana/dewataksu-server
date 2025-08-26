@@ -2,7 +2,7 @@
 GET http://localhost:5050/destinations/kuta-beach
 
 ###
-GET http://localhost:5050/destinations?search=lebih
+GET http://localhost:5050/destinations
 
 
 ###

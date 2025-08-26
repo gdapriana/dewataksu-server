@@ -1,80 +1,90 @@
 import { NextFunction, Request, Response } from "express";
 import { DestinationServices } from "src/services/destination.service";
+import { ACTIONS, DB_SCHEMA } from "src/utils/error-response";
 import { UserRequest } from "src/utils/types";
 
 export class DestinationControllers {
-  static async GET(req: Request, res: Response, next: NextFunction) {
+  static readonly service = DestinationServices;
+  static readonly schema: DB_SCHEMA = "destination";
+
+  static readonly response = (action: ACTIONS) => {
+    return {
+      success: true,
+      message: `${action} ${this.schema} successfully`,
+    };
+  };
+
+  static GET = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { slug } = req.params;
-      const result = await DestinationServices.GET(slug);
+      const result = await this.service.GET(slug);
       res.status(200).json({
-        success: true,
+        ...this.response("get"),
         result,
-        message: "Get destination successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async GETs(req: Request, res: Response, next: NextFunction) {
+  };
+
+  static GETs = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as any;
-      const { destinations, pagination } = await DestinationServices.GETs(query);
+      const { destinations, pagination } = await this.service.GETs(query);
       res.status(200).json({
-        success: true,
+        ...this.response("gets"),
         result: {
           destinations,
           pagination,
         },
-        message: "Get destinations successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async POST(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static POST = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      const result = await DestinationServices.POST(req.user!, body);
+      const result = await this.service.POST(req.user!, body);
       res.status(200).json({
-        success: true,
+        ...this.response("create"),
         result,
-        message: "Create destination successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async PATCH(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static PATCH = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
       const body = req.body;
-      const result = await DestinationServices.PATCH(req.user!, id, body);
+      const result = await this.service.PATCH(req.user!, id, body);
       res.status(200).json({
-        success: true,
+        ...this.response("update"),
         result,
-        message: "Destination updated successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async DELETE(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static DELETE = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const result = await DestinationServices.DELETE(req.user!, id);
+      const result = await this.service.DELETE(req.user!, id);
       res.status(200).json({
-        success: true,
+        ...this.response("delete"),
         result,
-        message: "Destination deleted successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 }

@@ -1,62 +1,72 @@
 import { NextFunction, Request, Response } from "express";
 import { UserAuthServices, UserServices } from "src/services/user.service";
+import { ACTIONS, DB_SCHEMA } from "src/utils/error-response";
 import { UserRequest } from "src/utils/types";
 
 export class UserAuthController {
-  static async REGISTER(req: Request, res: Response, next: NextFunction) {
+  static readonly service = UserAuthServices;
+  static readonly schema: DB_SCHEMA = "user";
+
+  static readonly response = (action: ACTIONS, message?: string) => {
+    return {
+      success: true,
+      message: message || `${action} ${this.schema} successfully`,
+    };
+  };
+
+  static REGISTER = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      const result = await UserAuthServices.REGISTER(body);
+      const result = await this.service.REGISTER(body);
       res.status(200).json({
-        success: true,
+        ...this.response("create", "User created successfully"),
         result,
-        message: "User created successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async LOGIN(req: Request, res: Response, next: NextFunction) {
+  };
+
+  static LOGIN = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      const result: { accessToken: string; refreshToken: string } = await UserAuthServices.LOGIN(body);
+      const result: { accessToken: string; refreshToken: string } = await this.service.LOGIN(body);
       res.cookie("refreshToken", result.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
       });
 
       res.status(200).json({
-        success: true,
+        ...this.response("get", "User login successfully"),
         result: { accessToken: result.accessToken },
-        message: "User login successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 
-  static async REFRESH_TOKEN(req: Request, res: Response, next: NextFunction) {
+  static REFRESH_TOKEN = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const refreshToken = req.cookies.refreshToken;
-      const newAccessToken = await UserAuthServices.REFRESH_TOKEN(refreshToken);
+      const newAccessToken = await this.service.REFRESH_TOKEN(refreshToken);
       res.status(200).json({
-        success: true,
+        ...this.response("update", "New token generated successfully"),
         result: {
           accessToken: newAccessToken,
         },
-        message: "New token generated succesfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async ME(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static ME = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const id = req.user?.id;
-      const result = await UserAuthServices.ME(id);
+      const result = await this.service.ME(id);
       res.status(200).json({
         success: true,
         result,
@@ -65,40 +75,49 @@ export class UserAuthController {
       console.error(e);
       next(e);
     }
-  }
+  };
 }
 
 export class UserController {
-  static async GET(req: Request, res: Response, next: NextFunction) {
+  static readonly service = UserServices;
+  static readonly schema: DB_SCHEMA = "user";
+
+  static readonly response = (action: ACTIONS) => {
+    return {
+      success: true,
+      message: `${action} ${this.schema} successfully`,
+    };
+  };
+
+  static GET = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { name } = req.params;
-      const result = await UserServices.GET(name);
+      const result = await this.service.GET(name);
       res.status(200).json({
-        success: true,
+        ...this.response("get"),
         result,
-        message: "Get user success",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 
-  static async GETs(req: Request, res: Response, next: NextFunction) {
+  static GETs = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const query = req.query as any;
-      const result = await UserServices.GETs(query);
+      const result = await this.service.GETs(query);
       res.status(200).json({
-        success: true,
+        ...this.response("gets"),
         result,
-        message: "Get users success",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async PATCH(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static PATCH = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       let id: string;
       if (req.user?.role === "ADMIN") {
@@ -107,30 +126,28 @@ export class UserController {
         id = req.user?.id!;
       }
       const body = req.body;
-      const result = await UserServices.PATCH(req.user!, id, body);
+      const result = await this.service.PATCH(req.user!, id, body);
       res.status(200).json({
-        success: true,
+        ...this.response("update"),
         result,
-        message: "User updated successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 
-  static async DELETE(req: UserRequest, res: Response, next: NextFunction) {
+  static DELETE = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const result = await UserServices.DELETE(req.user!, id);
+      const result = await this.service.DELETE(req.user!, id);
       res.status(200).json({
-        success: true,
+        ...this.response("delete"),
         result,
-        message: "User deleted successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 }

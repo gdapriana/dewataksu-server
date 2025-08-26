@@ -1,35 +1,44 @@
 import { NextFunction, Response } from "express";
 import { BookmarkServices } from "src/services/bookmark.service";
-import { LikeServices } from "src/services/like.service";
+import { ACTIONS, DB_SCHEMA } from "src/utils/error-response";
 import { UserRequest } from "src/utils/types";
 
 export class BookmarkControllers {
-  static async POST(req: UserRequest, res: Response, next: NextFunction) {
+  static readonly service = BookmarkServices;
+  static readonly schema: DB_SCHEMA = "bookmark";
+
+  static readonly response = (action: ACTIONS, message?: string) => {
+    return {
+      success: true,
+      message: message || `${action} ${this.schema} successfully`,
+    };
+  };
+
+  static POST = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const body = req.body;
-      const result = await BookmarkServices.POST({ userId: req.user?.id!, ...body });
+      const result = await this.service.POST({ userId: req.user?.id!, ...body });
       res.status(200).json({
-        success: true,
+        ...this.response("create", "Bookmarked successfully"),
         result,
-        message: "Bookmarked successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
-  static async DELETE(req: UserRequest, res: Response, next: NextFunction) {
+  };
+
+  static DELETE = async (req: UserRequest, res: Response, next: NextFunction) => {
     try {
       const { id } = req.params;
-      const result = await BookmarkServices.DELETE(id);
+      const result = await this.service.DELETE(id);
       res.status(200).json({
-        success: true,
+        ...this.response("delete", "Unbookmarked successfully"),
         result,
-        message: "Unbookmarked successfully",
       });
     } catch (e) {
       console.error(e);
       next(e);
     }
-  }
+  };
 }
