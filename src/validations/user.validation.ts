@@ -3,12 +3,7 @@ import { z } from "zod";
 export class UserAuthValidation {
   static readonly LOGIN = z.object({
     name: z.string().min(3, "Username must be at least 3 characters long").max(30, "Username must be at most 30 characters long").trim(),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters long")
-      .max(128, "Password must be at most 128 characters long")
-      .regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d).+$/, "Password must include at least one uppercase letter, one lowercase letter, and one number")
-      .trim(),
+    password: z.string().trim(),
   });
 
   static readonly REGISTER = z.object({
